@@ -1,0 +1,69 @@
+---
+- name: Deploy Nginx Docker container with external index.html and custom nginx.conf
+  hosts: all
+  become: yes
+  tasks:
+    #закинем это здесь, так как занимает много времени
+    - name: Pull latest nginx image
+      community.docker.docker_image:
+        name: nginx:latest
+        source: pull
+      async: 300
+      poll: 0 #не ждём, идём дальше
+      register: nginx_task #для получения job_id
+  
+    - name: Ensure Docker is installed
+      ansible.builtin.package:
+        name: docker.io
+        state: present
+
+    - name: Ensure Docker service is started and enabled
+      ansible.builtin.systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Create directory for nginx config and html files
+      ansible.builtin.file:
+        path: /opt/nginx-docker
+        state: directory
+        mode: '0755'
+
+    - name: Copy nginx.conf to host
+      ansible.builtin.copy:
+        src: files/nginx.conf
+        dest: /opt/nginx-docker/nginx.conf
+        mode: '0644'
+
+    - name: Copy index.html to host
+      ansible.builtin.copy:
+        src: files/index.html
+        dest: /opt/nginx-docker/index.html
+        mode: '0644'
+
+    
+    # а вот здесь нам уже nginx_task должен быть завершён
+    # сделаем отдельный task по ожиданию завершения
+    - name: Wait bachround async task nginx_task
+      async_status:
+        jid: "{{ nginx_task.ansible_job_id }}"
+      register: bachround_task
+      until: bachround_task.finished
+      retries: 100 #проверяем 100 раз
+      delay: 5 #проверяем раз в 5 секунд
+
+    - name: Run Nginx container with port mapping and volume mounts
+      docker_container:
+        name: nginx-container
+        image: nginx:latest
+        state: started
+        recreate: yes
+        ports:
+          - "80:80"
+        expose:
+          - 80
+        volumes:
+          - /opt/nginx-docker/index.html:/usr/share/nginx/html/index.html:ro
+          - /opt/nginx-docker/nginx.conf:/etc/nginx/nginx.conf:ro
+        restart_policy: always
+      

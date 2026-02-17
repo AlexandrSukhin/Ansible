@@ -1,0 +1,5 @@
+ [webservers]
+ 172.30.205.82 ansible_user=beko
+
+ [webservers:vars]
+ansible_become_password=beko
