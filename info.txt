@@ -1,1 +1,45 @@
+ansible  127.0.0.1 -m setup -a "filter=ansible_default_ipv4,ansible_os_family,ansible_distribution,ansible_distribution_version,ansible_hostname,ansible_env"
 
+172.30.205.182 | SUCCESS => {
+    "ansible_facts": {
+        "ansible_default_ipv4": {
+            "address": "172.30.205.182",
+            "alias": "eth0",
+            "broadcast": "172.30.207.255",
+            "gateway": "172.30.192.1",
+            "interface": "eth0",
+            "macaddress": "00:15:5d:8f:53:c8",
+            "mtu": 1500,
+            "netmask": "255.255.240.0",
+            "network": "172.30.192.0",
+            "prefix": "20",
+            "type": "ether"
+        },
+        "ansible_distribution": "Ubuntu",
+        "ansible_distribution_version": "24.04",
+        "ansible_env": {
+            "DBUS_SESSION_BUS_ADDRESS": "unix:path=/run/user/1000/bus",
+            "HOME": "/home/beko",
+            "LANG": "C.UTF-8",
+            "LOGNAME": "beko",
+            "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin",
+            "PWD": "/home/beko",
+            "SHELL": "/bin/bash",
+            "SHLVL": "0",
+            "SSH_CLIENT": "172.30.205.82 55940 22",
+            "SSH_CONNECTION": "172.30.205.82 55940 172.30.205.182 22",
+            "SSH_TTY": "/dev/pts/2",
+            "TERM": "xterm-256color",
+            "USER": "beko",
+            "XDG_RUNTIME_DIR": "/run/user/1000",
+            "XDG_SESSION_CLASS": "user",
+            "XDG_SESSION_ID": "9",
+            "XDG_SESSION_TYPE": "tty",
+            "_": "/bin/sh"
+        },
+        "ansible_hostname": "A00168492",
+        "ansible_os_family": "Debian",
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false
+}
